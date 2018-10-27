@@ -1,0 +1,86 @@
+body {
+  background-color: lightcyan;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+}
+.rip {
+  color: lightcyan;
+}
+h1 {
+  font-size: 36px;
+
+}
+h2 {
+  font-size: 24px;
+
+}
+h3 {
+  font-size: 18px;
+
+}
+h4 {
+  font-size: 36px;
+
+}
+table {
+  border-collapse: collapse;
+}
+table, th, td{
+  border: 1px solid black;
+}
+td {
+  color: black;
+}
+.album-title:hover {
+  background-color: aqua;
+  font-family: 'Courier New', Courier, monospace;
+}
+.hidden-text {
+  color: lightcyan;
+}
+#d12-intro {
+  background-color: rgb(240, 255, 255);
+}
+#d12-members {
+  float: right;
+  width: 320px;
+  background-color: rgb(240, 255, 255);
+  padding-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 2px dashed black;
+  margin-left: 20px;
+  margin-top: 65px;
+}
+#d12-album-introducer {
+  margin-top: 33px;
+  padding: 20px;
+  width: 73.25%;
+  font-size: 16px;
+  background-color: rgb(240, 255, 255);
+  border-bottom: 7px solid black;
+  border-left: 7px solid black;
+  border-top: 7px solid gray;
+  border-right: 7px solid gray;
+}
+#favorite-lyrics-header, d12-members-header {
+  text-decoration: underline;
+}
+#d12-members-yrs {
+  float: left;
+  border: 2px dashed black;
+  background-color: rgb(240, 255, 255);
+}
+#album-table {
+  margin-left: 30px;
+}
+#one-shot-2-shot {
+  position: absolute;
+  top: 300px;
+  right: 700px;
+}
+#underground {
+  position: absolute;
+  top: 410px;
+  right: 767px;
+}
