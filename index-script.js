@@ -1,279 +1,322 @@
-/*
-* Secure Hash Algorithm (SHA512)
-* http://www.happycode.info/
-*/
-
-function SHA512(str) {
- function int64(msint_32, lsint_32) {
- this.highOrder = msint_32;
- this.lowOrder = lsint_32;
- }
-
- var H = [new int64(0x6a09e667, 0xf3bcc908), new int64(0xbb67ae85, 0x84caa73b),
- new int64(0x3c6ef372, 0xfe94f82b), new int64(0xa54ff53a, 0x5f1d36f1),
- new int64(0x510e527f, 0xade682d1), new int64(0x9b05688c, 0x2b3e6c1f),
- new int64(0x1f83d9ab, 0xfb41bd6b), new int64(0x5be0cd19, 0x137e2179)];
-
- var K = [new int64(0x428a2f98, 0xd728ae22), new int64(0x71374491, 0x23ef65cd),
- new int64(0xb5c0fbcf, 0xec4d3b2f), new int64(0xe9b5dba5, 0x8189dbbc),
- new int64(0x3956c25b, 0xf348b538), new int64(0x59f111f1, 0xb605d019),
- new int64(0x923f82a4, 0xaf194f9b), new int64(0xab1c5ed5, 0xda6d8118),
- new int64(0xd807aa98, 0xa3030242), new int64(0x12835b01, 0x45706fbe),
- new int64(0x243185be, 0x4ee4b28c), new int64(0x550c7dc3, 0xd5ffb4e2),
- new int64(0x72be5d74, 0xf27b896f), new int64(0x80deb1fe, 0x3b1696b1),
- new int64(0x9bdc06a7, 0x25c71235), new int64(0xc19bf174, 0xcf692694),
- new int64(0xe49b69c1, 0x9ef14ad2), new int64(0xefbe4786, 0x384f25e3),
- new int64(0x0fc19dc6, 0x8b8cd5b5), new int64(0x240ca1cc, 0x77ac9c65),
- new int64(0x2de92c6f, 0x592b0275), new int64(0x4a7484aa, 0x6ea6e483),
- new int64(0x5cb0a9dc, 0xbd41fbd4), new int64(0x76f988da, 0x831153b5),
- new int64(0x983e5152, 0xee66dfab), new int64(0xa831c66d, 0x2db43210),
- new int64(0xb00327c8, 0x98fb213f), new int64(0xbf597fc7, 0xbeef0ee4),
- new int64(0xc6e00bf3, 0x3da88fc2), new int64(0xd5a79147, 0x930aa725),
- new int64(0x06ca6351, 0xe003826f), new int64(0x14292967, 0x0a0e6e70),
- new int64(0x27b70a85, 0x46d22ffc), new int64(0x2e1b2138, 0x5c26c926),
- new int64(0x4d2c6dfc, 0x5ac42aed), new int64(0x53380d13, 0x9d95b3df),
- new int64(0x650a7354, 0x8baf63de), new int64(0x766a0abb, 0x3c77b2a8),
- new int64(0x81c2c92e, 0x47edaee6), new int64(0x92722c85, 0x1482353b),
- new int64(0xa2bfe8a1, 0x4cf10364), new int64(0xa81a664b, 0xbc423001),
- new int64(0xc24b8b70, 0xd0f89791), new int64(0xc76c51a3, 0x0654be30),
- new int64(0xd192e819, 0xd6ef5218), new int64(0xd6990624, 0x5565a910),
- new int64(0xf40e3585, 0x5771202a), new int64(0x106aa070, 0x32bbd1b8),
- new int64(0x19a4c116, 0xb8d2d0c8), new int64(0x1e376c08, 0x5141ab53),
- new int64(0x2748774c, 0xdf8eeb99), new int64(0x34b0bcb5, 0xe19b48a8),
- new int64(0x391c0cb3, 0xc5c95a63), new int64(0x4ed8aa4a, 0xe3418acb),
- new int64(0x5b9cca4f, 0x7763e373), new int64(0x682e6ff3, 0xd6b2b8a3),
- new int64(0x748f82ee, 0x5defb2fc), new int64(0x78a5636f, 0x43172f60),
- new int64(0x84c87814, 0xa1f0ab72), new int64(0x8cc70208, 0x1a6439ec),
- new int64(0x90befffa, 0x23631e28), new int64(0xa4506ceb, 0xde82bde9),
- new int64(0xbef9a3f7, 0xb2c67915), new int64(0xc67178f2, 0xe372532b),
- new int64(0xca273ece, 0xea26619c), new int64(0xd186b8c7, 0x21c0c207),
- new int64(0xeada7dd6, 0xcde0eb1e), new int64(0xf57d4f7f, 0xee6ed178),
- new int64(0x06f067aa, 0x72176fba), new int64(0x0a637dc5, 0xa2c898a6),
- new int64(0x113f9804, 0xbef90dae), new int64(0x1b710b35, 0x131c471b),
- new int64(0x28db77f5, 0x23047d84), new int64(0x32caab7b, 0x40c72493),
- new int64(0x3c9ebe0a, 0x15c9bebc), new int64(0x431d67c4, 0x9c100d4c),
- new int64(0x4cc5d4be, 0xcb3e42b6), new int64(0x597f299c, 0xfc657e2a),
- new int64(0x5fcb6fab, 0x3ad6faec), new int64(0x6c44198c, 0x4a475817)];
-
- var W = new Array(64);
- var a, b, c, d, e, f, g, h, i, j;
- var T1, T2;
- var charsize = 8;
-
- function utf8_encode(str) {
- return unescape(encodeURIComponent(str));
- }
-
- function str2binb(str) {
- var bin = [];
- var mask = (1 << charsize) - 1;
- var len = str.length * charsize;
-
- for (var i = 0; i < len; i += charsize) {
- bin[i >> 5] |= (str.charCodeAt(i / charsize) & mask) << (32 - charsize - (i % 32));
- }
-
- return bin;
- }
-
- function binb2hex(binarray) {
- var hex_tab = '0123456789abcdef';
- var str = '';
- var length = binarray.length * 4;
- var srcByte;
-
- for (var i = 0; i < length; i += 1) {
- srcByte = binarray[i >> 2] >> ((3 - (i % 4)) * 8);
- str += hex_tab.charAt((srcByte >> 4) & 0xF) + hex_tab.charAt(srcByte & 0xF);
- }
-
- return str;
- }
-
- function safe_add_2(x, y) {
- var lsw, msw, lowOrder, highOrder;
-
- lsw = (x.lowOrder & 0xFFFF) + (y.lowOrder & 0xFFFF);
- msw = (x.lowOrder >>> 16) + (y.lowOrder >>> 16) + (lsw >>> 16);
- lowOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
-
- lsw = (x.highOrder & 0xFFFF) + (y.highOrder & 0xFFFF) + (msw >>> 16);
- msw = (x.highOrder >>> 16) + (y.highOrder >>> 16) + (lsw >>> 16);
- highOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
-
- return new int64(highOrder, lowOrder);
- }
-
- function safe_add_4(a, b, c, d) {
- var lsw, msw, lowOrder, highOrder;
-
- lsw = (a.lowOrder & 0xFFFF) + (b.lowOrder & 0xFFFF) + (c.lowOrder & 0xFFFF) + (d.lowOrder & 0xFFFF);
- msw = (a.lowOrder >>> 16) + (b.lowOrder >>> 16) + (c.lowOrder >>> 16) + (d.lowOrder >>> 16) + (lsw >>> 16);
- lowOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
-
- lsw = (a.highOrder & 0xFFFF) + (b.highOrder & 0xFFFF) + (c.highOrder & 0xFFFF) + (d.highOrder & 0xFFFF) + (msw >>> 16);
- msw = (a.highOrder >>> 16) + (b.highOrder >>> 16) + (c.highOrder >>> 16) + (d.highOrder >>> 16) + (lsw >>> 16);
- highOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
-
- return new int64(highOrder, lowOrder);
- }
-
- function safe_add_5(a, b, c, d, e) {
- var lsw, msw, lowOrder, highOrder;
-
- lsw = (a.lowOrder & 0xFFFF) + (b.lowOrder & 0xFFFF) + (c.lowOrder & 0xFFFF) + (d.lowOrder & 0xFFFF) + (e.lowOrder & 0xFFFF);
- msw = (a.lowOrder >>> 16) + (b.lowOrder >>> 16) + (c.lowOrder >>> 16) + (d.lowOrder >>> 16) + (e.lowOrder >>> 16) + (lsw >>> 16);
- lowOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
-
- lsw = (a.highOrder & 0xFFFF) + (b.highOrder & 0xFFFF) + (c.highOrder & 0xFFFF) + (d.highOrder & 0xFFFF) + (e.highOrder & 0xFFFF) + (msw >>> 16);
- msw = (a.highOrder >>> 16) + (b.highOrder >>> 16) + (c.highOrder >>> 16) + (d.highOrder >>> 16) + (e.highOrder >>> 16) + (lsw >>> 16);
- highOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
-
- return new int64(highOrder, lowOrder);
- }
-
- function maj(x, y, z) {
- return new int64(
- (x.highOrder & y.highOrder) ^ (x.highOrder & z.highOrder) ^ (y.highOrder & z.highOrder),
- (x.lowOrder & y.lowOrder) ^ (x.lowOrder & z.lowOrder) ^ (y.lowOrder & z.lowOrder)
- );
- }
-
- function ch(x, y, z) {
- return new int64(
- (x.highOrder & y.highOrder) ^ (~x.highOrder & z.highOrder),
- (x.lowOrder & y.lowOrder) ^ (~x.lowOrder & z.lowOrder)
- );
- }
-
- function rotr(x, n) {
- if (n <= 32) {
- return new int64(
- (x.highOrder >>> n) | (x.lowOrder << (32 - n)),
- (x.lowOrder >>> n) | (x.highOrder << (32 - n))
- );
- } else {
- return new int64(
- (x.lowOrder >>> n) | (x.highOrder << (32 - n)),
- (x.highOrder >>> n) | (x.lowOrder << (32 - n))
- );
- }
- }
-
- function sigma0(x) {
- var rotr28 = rotr(x, 28);
- var rotr34 = rotr(x, 34);
- var rotr39 = rotr(x, 39);
-
- return new int64(
- rotr28.highOrder ^ rotr34.highOrder ^ rotr39.highOrder,
- rotr28.lowOrder ^ rotr34.lowOrder ^ rotr39.lowOrder
- );
- }
-
- function sigma1(x) {
- var rotr14 = rotr(x, 14);
- var rotr18 = rotr(x, 18);
- var rotr41 = rotr(x, 41);
-
- return new int64(
- rotr14.highOrder ^ rotr18.highOrder ^ rotr41.highOrder,
- rotr14.lowOrder ^ rotr18.lowOrder ^ rotr41.lowOrder
- );
- }
-
- function gamma0(x) {
- var rotr1 = rotr(x, 1), rotr8 = rotr(x, 8), shr7 = shr(x, 7);
-
- return new int64(
- rotr1.highOrder ^ rotr8.highOrder ^ shr7.highOrder,
- rotr1.lowOrder ^ rotr8.lowOrder ^ shr7.lowOrder
- );
- }
-
- function gamma1(x) {
- var rotr19 = rotr(x, 19);
- var rotr61 = rotr(x, 61);
- var shr6 = shr(x, 6);
-
- return new int64(
- rotr19.highOrder ^ rotr61.highOrder ^ shr6.highOrder,
- rotr19.lowOrder ^ rotr61.lowOrder ^ shr6.lowOrder
- );
- }
-
- function shr(x, n) {
- if (n <= 32) {
- return new int64(
- x.highOrder >>> n,
- x.lowOrder >>> n | (x.highOrder << (32 - n))
- );
- } else {
- return new int64(
- 0,
- x.highOrder << (32 - n)
- );
- }
- }
-
- str = utf8_encode(str);
- strlen = str.length*charsize;
- str = str2binb(str);
-
- str[strlen >> 5] |= 0x80 << (24 - strlen % 32);
- str[(((strlen + 128) >> 10) << 5) + 31] = strlen;
-
- for (var i = 0; i < str.length; i += 32) {
- a = H[0];
- b = H[1];
- c = H[2];
- d = H[3];
- e = H[4];
- f = H[5];
- g = H[6];
- h = H[7];
-
- for (var j = 0; j < 80; j++) {
- if (j < 16) {
- W[j] = new int64(str[j*2 + i], str[j*2 + i + 1]);
- } else {
- W[j] = safe_add_4(gamma1(W[j - 2]), W[j - 7], gamma0(W[j - 15]), W[j - 16]);
- }
-
- T1 = safe_add_5(h, sigma1(e), ch(e, f, g), K[j], W[j]);
- T2 = safe_add_2(sigma0(a), maj(a, b, c));
- h = g;
- g = f;
- f = e;
- e = safe_add_2(d, T1);
- d = c;
- c = b;
- b = a;
- a = safe_add_2(T1, T2);
- }
-
- H[0] = safe_add_2(a, H[0]);
- H[1] = safe_add_2(b, H[1]);
- H[2] = safe_add_2(c, H[2]);
- H[3] = safe_add_2(d, H[3]);
- H[4] = safe_add_2(e, H[4]);
- H[5] = safe_add_2(f, H[5]);
- H[6] = safe_add_2(g, H[6]);
- H[7] = safe_add_2(h, H[7]);
- }
-
- var binarray = [];
- for (var i = 0; i < H.length; i++) {
- binarray.push(H[i].highOrder);
- binarray.push(H[i].lowOrder);
- }
- return binb2hex(binarray);
+var b;
+if (!(b = t)) {
+        var w = Math,
+                y = {}, B = y.p = {}, aa = function () {}, C = B.A = {
+                        extend: function (a) {
+                                aa.prototype = this;
+                                var c = new aa;
+                                a && c.u(a);
+                                c.z = this;
+                                return c
+                        },
+                        create: function () {
+                                var a = this.extend();
+                                a.h.apply(a, arguments);
+                                return a
+                        },
+                        h: function () {},
+                        u: function (a) {
+                                for (var c in a) a.hasOwnProperty(c) && (this[c] = a[c]);
+                                a.hasOwnProperty("toString") && (this.toString = a.toString)
+                        },
+                        e: function () {
+                                return this.z.extend(this)
+                        }
+                }, D = B.i = C.extend({
+                        h: function (a, c) {
+                                a = this.d = a || [];
+                                this.c = void 0 != c ? c : 4 * a.length
+                        },
+                        toString: function (a) {
+                                return (a || ba)
+                                        .stringify(this)
+                        },
+                        concat: function (a) {
+                                var c = this.d,
+                                        e = a.d,
+                                        d = this.c,
+                                        a = a.c;
+                                this.t();
+                                if (d % 4) for (var g = 0; g < a; g++) c[d + g >>> 2] |= (e[g >>> 2] >>> 24 - 8 * (g % 4) & 255) << 24 - 8 * ((d + g) % 4);
+                                else if (65535 < e.length) for (g = 0; g < a; g += 4) c[d + g >>> 2] = e[g >>> 2];
+                                else c.push.apply(c, e);
+                                this.c += a;
+                                return this
+                        },
+                        t: function () {
+                                var a = this.d,
+                                        c = this.c;
+                                a[c >>> 2] &= 4294967295 << 32 - 8 * (c % 4);
+                                a.length = w.ceil(c / 4)
+                        },
+                        e: function () {
+                                var a = C.e.call(this);
+                                a.d = this.d.slice(0);
+                                return a
+                        },
+                        random: function (a) {
+                                for (var c = [], e = 0; e < a; e += 4) c.push(4294967296 * w.random() | 0);
+                                return D.create(c, a)
+                        }
+                }),
+                ca = y.O = {}, ba = ca.K = {
+                        stringify: function (a) {
+                                for (var c = a.d, a = a.c, e = [], d = 0; d < a; d++) {
+                                        var g = c[d >>> 2] >>> 24 - 8 * (d % 4) & 255;
+                                        e.push((g >>> 4)
+                                                .toString(16));
+                                        e.push((g & 15)
+                                                .toString(16))
+                                }
+                                return e.join("")
+                        },
+                        parse: function (a) {
+                                for (var c = a.length, e = [], d = 0; d < c; d += 2) e[d >>> 3] |= parseInt(a.substr(d, 2), 16) << 24 - 4 * (d % 8);
+                                return D.create(e, c / 2)
+                        }
+                }, da = ca.M = {
+                        stringify: function (a) {
+                                for (var c = a.d, a = a.c, e = [], d = 0; d < a; d++) e.push(String.fromCharCode(c[d >>> 2] >>> 24 - 8 * (d % 4) & 255));
+                                return e.join("")
+                        },
+                        parse: function (a) {
+                                for (var c = a.length, e = [], d = 0; d < c; d++) e[d >>> 2] |= (a.charCodeAt(d) & 255) << 24 - 8 * (d % 4);
+                                return D.create(e, c)
+                        }
+                }, ea = ca.N = {
+                        stringify: function (a) {
+                                try {
+                                        return decodeURIComponent(escape(da.stringify(a)))
+                                } catch (c) {
+                                        throw Error("Malformed UTF-8 data");
+                                }
+                        },
+                        parse: function (a) {
+                                return da.parse(unescape(encodeURIComponent(a)))
+                        }
+                }, ia = B.I = C.extend({
+                        reset: function () {
+                                this.g = D.create();
+                                this.j = 0
+                        },
+                        l: function (a) {
+                                "string" == typeof a && (a = ea.parse(a));
+                                this.g.concat(a);
+                                this.j += a.c
+                        },
+                        m: function (a) {
+                                var c = this.g,
+                                        e = c.d,
+                                        d = c.c,
+                                        g = this.n,
+                                        s = d / (4 * g),
+                                        s = a ? w.ceil(s) : w.max((s | 0) - this.r, 0),
+                                        a = s * g,
+                                        d = w.min(4 * a, d);
+                                if (a) {
+                                        for (var l = 0; l < a; l += g) this.H(e, l);
+                                        l = e.splice(0, a);
+                                        c.c -= d
+                                }
+                                return D.create(l, d)
+                        },
+                        e: function () {
+                                var a = C.e.call(this);
+                                a.g = this.g.e();
+                                return a
+                        },
+                        r: 0
+                });
+        B.B = ia.extend({
+                h: function () {
+                        this.reset()
+                },
+                reset: function () {
+                        ia.reset.call(this);
+                        this.q()
+                },
+                update: function (a) {
+                        this.l(a);
+                        this.m();
+                        return this
+                },
+                o: function (a) {
+                        a && this.l(a);
+                        this.G();
+                        return this.f
+                },
+                e: function () {
+                        var a = ia.e.call(this);
+                        a.f = this.f.e();
+                        return a
+                },
+                n: 16,
+                D: function (a) {
+                        return function (c, e) {
+                                return a.create(e)
+                                        .o(c)
+                        }
+                },
+                F: function (a) {
+                        return function (c,
+                        e) {
+                                return ja.J.create(a, e)
+                                        .o(c)
+                        }
+                }
+        });
+        var ja = y.s = {};
+        b = y
 }
+var t = b,
+        K = t,
+        ka = K.p,
+        la = ka.A,
+        va = ka.i,
+        K = K.w = {};
+K.C = la.extend({
+        h: function (a, c) {
+                this.a = a;
+                this.b = c
+        }
+});
+K.i = la.extend({
+        h: function (a, c) {
+                a = this.d = a || [];
+                this.c = void 0 != c ? c : 8 * a.length
+        },
+        v: function () {
+                for (var a = this.d, c = a.length, e = [], d = 0; d < c; d++) {
+                        var g = a[d];
+                        e.push(g.a);
+                        e.push(g.b)
+                }
+                return va.create(e, this.c)
+        },
+        e: function () {
+                for (var a = la.e.call(this), c = a.d = this.d.slice(0), e = c.length, d = 0; d < e; d++) c[d] = c[d].e();
+                return a
+        }
+});
+
+function L() {
+        return wa.create.apply(wa, arguments)
+}
+for (var xa = t.p.B, M = t.w, wa = M.C, ya = M.i, M = t.s, za = [L(1116352408, 3609767458), L(1899447441, 602891725), L(3049323471, 3964484399), L(3921009573, 2173295548), L(961987163, 4081628472), L(1508970993, 3053834265), L(2453635748, 2937671579), L(2870763221, 3664609560), L(3624381080, 2734883394), L(310598401, 1164996542), L(607225278, 1323610764), L(1426881987, 3590304994), L(1925078388, 4068182383), L(2162078206, 991336113), L(2614888103, 633803317), L(3248222580, 3479774868), L(3835390401, 2666613458), L(4022224774, 944711139), L(264347078,
+2341262773), L(604807628, 2007800933), L(770255983, 1495990901), L(1249150122, 1856431235), L(1555081692, 3175218132), L(1996064986, 2198950837), L(2554220882, 3999719339), L(2821834349, 766784016), L(2952996808, 2566594879), L(3210313671, 3203337956), L(3336571891, 1034457026), L(3584528711, 2466948901), L(113926993, 3758326383), L(338241895, 168717936), L(666307205, 1188179964), L(773529912, 1546045734), L(1294757372, 1522805485), L(1396182291, 2643833823), L(1695183700, 2343527390), L(1986661051, 1014477480), L(2177026350, 1206759142),
+L(2456956037, 344077627), L(2730485921, 1290863460), L(2820302411, 3158454273), L(3259730800, 3505952657), L(3345764771, 106217008), L(3516065817, 3606008344), L(3600352804, 1432725776), L(4094571909, 1467031594), L(275423344, 851169720), L(430227734, 3100823752), L(506948616, 1363258195), L(659060556, 3750685593), L(883997877, 3785050280), L(958139571, 3318307427), L(1322822218, 3812723403), L(1537002063, 2003034995), L(1747873779, 3602036899), L(1955562222, 1575990012), L(2024104815, 1125592928), L(2227730452, 2716904306), L(2361852424,
+442776044), L(2428436474, 593698344), L(2756734187, 3733110249), L(3204031479, 2999351573), L(3329325298, 3815920427), L(3391569614, 3928383900), L(3515267271, 566280711), L(3940187606, 3454069534), L(4118630271, 4000239992), L(116418474, 1914138554), L(174292421, 2731055270), L(289380356, 3203993006), L(460393269, 320620315), L(685471733, 587496836), L(852142971, 1086792851), L(1017036298, 365543100), L(1126000580, 2618297676), L(1288033470, 3409855158), L(1501505948, 4234509866), L(1607167915, 987167468), L(1816402316, 1246189591)], $ = [], Aa = 0; 80 > Aa; Aa++) $[Aa] = L();
+M = M.k = xa.extend({
+        q: function () {
+                this.f = ya.create([L(1779033703, 4089235720), L(3144134277, 2227873595), L(1013904242, 4271175723), L(2773480762, 1595750129), L(1359893119, 2917565137), L(2600822924, 725511199), L(528734635, 4215389547), L(1541459225, 327033209)])
+        },
+        H: function (a, c) {
+                for (var e = this.f.d, d = e[0], g = e[1], s = e[2], l = e[3], N = e[4], O = e[5], P = e[6], e = e[7], ma = d.a, Q = d.b, na = g.a, R = g.b, oa = s.a, S = s.b, pa = l.a, T = l.b, qa = N.a, U = N.b, ra = O.a, V = O.b, sa = P.a, W = P.b, ta = e.a, X = e.b, m = ma, i = Q, E = na, z = R, F = oa, A = S, fa = pa, G = T, n = qa, j = U, Y = ra, H = V, Z = sa,
+                I = W, ga = ta, J = X, p = 0; 80 > p; p++) {
+                        var u = $[p];
+                        if (16 > p) var k = u.a = a[c + 2 * p] | 0,
+                                f = u.b = a[c + 2 * p + 1] | 0;
+                        else {
+                                var k = $[p - 15],
+                                        f = k.a,
+                                        q = k.b,
+                                        k = (q << 31 | f >>> 1) ^ (q << 24 | f >>> 8) ^ f >>> 7,
+                                        q = (f << 31 | q >>> 1) ^ (f << 24 | q >>> 8) ^ (f << 25 | q >>> 7),
+                                        x = $[p - 2],
+                                        f = x.a,
+                                        h = x.b,
+                                        x = (h << 13 | f >>> 19) ^ (f << 3 | h >>> 29) ^ f >>> 6,
+                                        h = (f << 13 | h >>> 19) ^ (h << 3 | f >>> 29) ^ (f << 26 | h >>> 6),
+                                        f = $[p - 7],
+                                        ha = f.a,
+                                        v = $[p - 16],
+                                        r = v.a,
+                                        v = v.b,
+                                        f = q + f.b,
+                                        k = k + ha + (f >>> 0 < q >>> 0 ? 1 : 0),
+                                        f = f + h,
+                                        k = k + x + (f >>> 0 < h >>> 0 ? 1 : 0),
+                                        f = f + v,
+                                        k = k + r + (f >>> 0 < v >>> 0 ? 1 : 0);
+                                u.a = k;
+                                u.b = f
+                        }
+                        var ha = n & Y ^ ~n & Z,
+                                v = j & H ^ ~j & I,
+                                u = m & E ^ m & F ^ E & F,
+                                Ba = i & z ^ i & A ^ z & A,
+                                q = (i << 4 | m >>> 28) ^ (m << 30 | i >>> 2) ^ (m << 25 | i >>> 7),
+                                x = (m << 4 | i >>> 28) ^ (i << 30 | m >>> 2) ^ (i << 25 | m >>> 7),
+                                h = za[p],
+                                Ca = h.a,
+                                ua = h.b,
+                                h = J + ((n << 18 | j >>> 14) ^ (n << 14 | j >>> 18) ^ (j << 23 | n >>> 9)),
+                                r = ga + ((j << 18 | n >>> 14) ^ (j << 14 | n >>> 18) ^ (n << 23 | j >>> 9)) + (h >>> 0 < J >>> 0 ? 1 : 0),
+                                h = h + v,
+                                r = r + ha + (h >>> 0 < v >>> 0 ? 1 : 0),
+                                h = h + ua,
+                                r = r + Ca + (h >>> 0 < ua >>> 0 ? 1 : 0),
+                                h = h + f,
+                                r = r + k + (h >>> 0 < f >>> 0 ? 1 : 0),
+                                f = x + Ba,
+                                u = q + u + (f >>> 0 < x >>> 0 ? 1 : 0),
+                                ga = Z,
+                                J = I,
+                                Z = Y,
+                                I = H,
+                                Y = n,
+                                H = j,
+                                j = G + h | 0,
+                                n = fa + r + (j >>> 0 < G >>> 0 ? 1 : 0) | 0,
+                                fa = F,
+                                G = A,
+                                F = E,
+                                A = z,
+                                E = m,
+                                z = i,
+                                i = h + f | 0,
+                                m = r + u + (i >>> 0 < h >>> 0 ? 1 : 0) | 0
+                }
+                Q = d.b = Q + i | 0;
+                d.a = ma + m + (Q >>> 0 < i >>> 0 ? 1 : 0) | 0;
+                R = g.b = R + z | 0;
+                g.a = na + E + (R >>> 0 < z >>> 0 ? 1 : 0) | 0;
+                S = s.b = S + A | 0;
+                s.a = oa + F + (S >>> 0 < A >>> 0 ? 1 : 0) | 0;
+                T = l.b = T + G | 0;
+                l.a = pa + fa + (T >>> 0 < G >>> 0 ? 1 : 0) | 0;
+                U = N.b = U + j | 0;
+                N.a = qa + n + (U >>> 0 < j >>> 0 ? 1 : 0) | 0;
+                V = O.b = V + H | 0;
+                O.a = ra + Y + (V >>> 0 < H >>> 0 ? 1 : 0) | 0;
+                W = P.b = W + I | 0;
+                P.a = sa + Z + (W >>> 0 < I >>> 0 ? 1 : 0) | 0;
+                X = e.b = X + J | 0;
+                e.a = ta + ga + (X >>> 0 < J >>> 0 ? 1 : 0) | 0
+        },
+        G: function () {
+                var a = this.g,
+                        c = a.d,
+                        e = 8 * this.j,
+                        d = 8 * a.c;
+                c[d >>> 5] |= 128 << 24 - d % 32;
+                c[(d + 128 >>> 10 << 5) + 31] = e;
+                a.c = 4 * c.length;
+                this.m();
+                this.f = this.f.v()
+        },
+        n: 32
+});
+t.k = xa.D(M);
+t.L = xa.F(M);
+sha512 = function (a) {
+        return t.k(a) + ""
+};
 function verify() {
   var outputHere = document.getElementById("result");
   var usrname = document.getElementById("usrname");
   var unhashedPassword = document.getElementById("password");
-  var hashedPassword = SHA512(unhashedPassword.value);
+  var hashedPassword = sha512(unhashedPassword.value);
   if (usrname.value === "hello" && hashedPassword = "11853df40f4b2b919d3815f64792e58d08663767a494bcbb38c0b2389d9140bbb170281b4a847be7757bde12c9cd0054ce3652d0ad3a1a0c92babb69798246ee") {
     outputHere.innerHTML = "Success!";  
   }
