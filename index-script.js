@@ -315,7 +315,7 @@ sha512 = function (a) {
 function verify() {
   var outputHere = document.getElementById("result");
   var usrname = document.getElementById("usrname");
-  var unhashedPassword = document.getElementById("password");
+  var unhashedPassword = document.getElementById("pw");
   var hashedPassword = sha512(unhashedPassword.value);
   if (usrname.value === "hello" && hashedPassword === "11853df40f4b2b919d3815f64792e58d08663767a494bcbb38c0b2389d9140bbb170281b4a847be7757bde12c9cd0054ce3652d0ad3a1a0c92babb69798246ee") {
     outputHere.innerHTML = "Success!";  
