@@ -324,3 +324,6 @@ function verify() {
     outputHere.innerHTML = "Username and/or password incorrect.";
   }
 }
+function register() {
+  window.location = "http://akhil841.github.io/register.html";       
+}
